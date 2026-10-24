@@ -1,0 +1,31 @@
+name: Build apps
+
+on:
+  workflow_dispatch:
+  push:
+    tags: ["v*"]
+
+jobs:
+  build:
+    strategy:
+      matrix:
+        os: [macos-latest, windows-latest]
+    runs-on: ${{ matrix.os }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Build (Mac)
+        if: runner.os == 'macOS'
+        run: ./build_mac.sh
+      - name: Build (Windows)
+        if: runner.os == 'Windows'
+        shell: cmd
+        run: echo.| build_windows.bat
+      - uses: actions/upload-artifact@v4
+        with:
+          name: File-Scanner-${{ runner.os }}
+          path: |
+            dist/*.zip
+            dist/*.exe
