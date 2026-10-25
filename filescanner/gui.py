@@ -8,7 +8,7 @@ from concurrent.futures import ThreadPoolExecutor
 
 from PySide6.QtCore import (QAbstractTableModel, QModelIndex, QObject, QSettings, QSortFilterProxyModel, Qt,
                             QThread, QUrl, Signal)
-from PySide6.QtGui import QAction, QBrush, QColor, QDesktopServices, QFont, QGuiApplication, QImage, QPixmap
+from PySide6.QtGui import QAction, QBrush, QColor, QDesktopServices, QFont, QGuiApplication
 from PySide6.QtWidgets import (QAbstractItemView, QApplication, QCheckBox, QComboBox, QDialog, QDialogButtonBox,
                                QFileDialog, QFormLayout, QGridLayout, QGroupBox, QHBoxLayout, QHeaderView, QLabel,
                                QLineEdit, QListWidget, QListWidgetItem, QMainWindow, QMenu, QMessageBox,
@@ -16,6 +16,7 @@ from PySide6.QtWidgets import (QAbstractItemView, QApplication, QCheckBox, QComb
                                QTreeWidget, QTreeWidgetItem, QVBoxLayout, QWidget)
 
 from . import __version__, duplicates, exporter
+from .preview import PreviewPane
 from .scanner import ScanOptions, enrich, human_size, walk
 
 APP_NAME = "File Scanner"
@@ -52,24 +53,6 @@ def reveal(path):
 
 def open_file(path):
     QDesktopServices.openUrl(QUrl.fromLocalFile(path))
-
-
-def thumbnail(path, max_size=320):
-    pix = QPixmap(path)
-    if pix.isNull():
-        try:
-            from PIL import Image
-            with Image.open(path) as img:
-                img.thumbnail((max_size, max_size))
-                img = img.convert("RGBA")
-                data = img.tobytes("raw", "RGBA")
-                qimg = QImage(data, img.width, img.height, QImage.Format_RGBA8888).copy()
-                pix = QPixmap.fromImage(qimg)
-        except Exception:
-            return None
-    if pix.isNull():
-        return None
-    return pix.scaled(max_size, max_size, Qt.KeepAspectRatio, Qt.SmoothTransformation)
 
 
 def record_html(r, with_preview=True):
@@ -476,23 +459,23 @@ class MainWindow(QMainWindow):
         self.table.doubleClicked.connect(lambda idx: open_file(self._record_at(idx)["path"]))
         self.table.selectionModel().currentRowChanged.connect(self._show_details)
 
-        self.preview = QLabel()
-        self.preview.setAlignment(Qt.AlignCenter)
-        self.preview.setMinimumHeight(0)
+        self.preview = PreviewPane()
         self.details = QTextBrowser()
         self.details.setOpenExternalLinks(True)
-        side = QWidget()
-        sv = QVBoxLayout(side)
-        sv.setContentsMargins(0, 0, 0, 0)
-        sv.addWidget(self.preview)
-        sv.addWidget(self.details, 1)
+        side = QSplitter(Qt.Vertical)
+        side.setChildrenCollapsible(False)
+        side.addWidget(self.preview)
+        side.addWidget(self.details)
+        side.setStretchFactor(0, 3)
+        side.setStretchFactor(1, 2)
+        side.setSizes([450, 300])
 
         split = QSplitter()
         split.addWidget(self.table)
         split.addWidget(side)
         split.setStretchFactor(0, 3)
         split.setStretchFactor(1, 1)
-        split.setSizes([900, 380])
+        split.setSizes([820, 480])
         v.addWidget(split, 1)
         return w
 
@@ -714,13 +697,7 @@ class MainWindow(QMainWindow):
             return
         r = self._record_at(current)
         self.details.setHtml(record_html(r))
-        pix = thumbnail(r["path"]) if r.get("category") == "Image" else None
-        if pix:
-            self.preview.setPixmap(pix)
-            self.preview.show()
-        else:
-            self.preview.clear()
-            self.preview.hide()
+        self.preview.show_record(r)
 
     def _context_menu(self, recs, global_pos):
         if not recs:
@@ -939,6 +916,7 @@ class MainWindow(QMainWindow):
             return
         records = [r for _, r, _ in ticked]
         group_ids = {r["path"]: gid for gid, r, _ in ticked}
+        self.preview.clear()   # release any file the preview has open
         moved, errors, log = duplicates.move_files(records, dest, self.scan_root, group_ids)
         moved_paths = {src for src, _ in moved}
         # drop moved files from the results
@@ -964,6 +942,7 @@ class MainWindow(QMainWindow):
         log, _ = QFileDialog.getOpenFileName(self, "Choose a moved-duplicates log", "", "Move logs (moved-duplicates-*.csv)")
         if not log:
             return
+        self.preview.clear()
         restored, errors = duplicates.undo_from_log(log)
         msg = f"Moved {len(restored):,} files back to their original folders."
         if errors:
@@ -1020,6 +999,7 @@ class MainWindow(QMainWindow):
             reveal(path)
 
     def closeEvent(self, e):
+        self.preview.shutdown()
         self.settings.setValue("geometry", self.saveGeometry())
         self._save_options()
         if self.worker:

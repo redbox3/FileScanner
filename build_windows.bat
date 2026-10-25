@@ -32,7 +32,7 @@ if not exist .venv\Scripts\python.exe (
   --collect-all pymediainfo --collect-submodules pillow_heif ^
   --exclude-module PySide6.QtWebEngineCore --exclude-module PySide6.QtWebEngineWidgets ^
   --exclude-module PySide6.Qt3DCore --exclude-module PySide6.QtQuick --exclude-module PySide6.QtQml ^
-  --exclude-module PySide6.QtPdf --exclude-module PySide6.QtMultimedia --exclude-module tkinter ^
+  --exclude-module tkinter ^
   main.py || goto :fail
 if not exist "dist\File Scanner.exe" goto :fail
 

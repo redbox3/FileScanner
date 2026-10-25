@@ -30,7 +30,16 @@ For every file:
    - Skip names matching a pattern (for example `node_modules, .git, *.tmp`)
    - Minimum file size
 2. Click **Scan**.
-3. **Files** tab: search, filter by category, or show duplicates only. Click a file to see its details and an image preview. Double-click to open it. Right-click to show it in Finder/Explorer or copy its path.
+3. **Files** tab: search, filter by category, or show duplicates only. Click a file to see its details and a preview. Double-click to open it. Right-click to show it in Finder/Explorer or copy its path.
+   The preview shows:
+   - Images, including HEIC, SVG, animated GIFs, Photoshop files and the embedded preview of camera RAW files. Scroll to zoom and drag to move around. Double-click to switch between fit and actual size.
+   - PDFs and PDF-compatible Illustrator files, with every page.
+   - Video and audio, with play/pause, a position slider and volume. Videos open on their first frame, and audio shows its cover art.
+   - The preview image saved inside InDesign, Illustrator, EPS, Adobe XD, Sketch, Pages, Numbers and Keynote files.
+   - Text and code, Markdown, CSV and Excel files as a table, and the text of Word, PowerPoint and OpenDocument files (or their thumbnail).
+   - The list of files inside ZIP and TAR archives.
+   - A sample of a font file at several sizes.
+   - Anything else the operating system can preview (Windows Explorer thumbnails or macOS Quick Look), for example InDesign, Premiere or 3D files when their apps are installed.
 4. **Summary** tab: totals by category and by extension, the largest files, empty files, and files that couldn't be read.
 5. **Duplicates** tab:
    - Choose how to match: identical content (checksum), name and size, or name only.
