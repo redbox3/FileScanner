@@ -1,0 +1,6 @@
+# Windows batch files need CRLF line endings, or cmd.exe can fail to find goto labels.
+*.bat text eol=crlf
+*.cmd text eol=crlf
+
+# Shell scripts need LF line endings, or bash fails to run them.
+*.sh text eol=lf
