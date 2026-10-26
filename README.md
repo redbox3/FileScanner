@@ -62,8 +62,8 @@ python3 -m venv .venv
 ## Building the apps
 
 - **Mac:** `./build_mac.sh` makes `dist/File Scanner.app` and `dist/File Scanner-mac.zip`.
-- **Windows:** run `build_windows.bat` on a Windows PC. It makes `dist\File Scanner.exe`, a single file that needs no installation.
-- **Both at once:** push this folder to GitHub, then run the **Build apps** workflow in the Actions tab (or push a tag such as `v1.0.0`). Download the Mac zip and the Windows exe from the finished run.
+- **Windows:** run `build_windows.bat` on a Windows PC. It makes the `dist\File Scanner` folder and `dist\File Scanner-windows.zip`. It needs no installation: unzip it anywhere and run `File Scanner.exe` inside the folder, keeping the other files next to it.
+- **Both at once:** push this folder to GitHub, then run the **Build apps** workflow in the Actions tab (or push a tag such as `v1.0.0`). Download the Mac and Windows zips from the finished run.
 
 The apps aren't code-signed:
 

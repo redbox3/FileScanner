@@ -1,5 +1,5 @@
 @echo off
-rem Builds "File Scanner.exe" in dist\. Run on Windows with 64-bit Python 3.9+ installed (python.org).
+rem Builds the "File Scanner" folder and "File Scanner-windows.zip" in dist\. Run on Windows with 64-bit Python 3.9+ installed (python.org).
 setlocal
 cd /d "%~dp0"
 
@@ -28,16 +28,20 @@ if not exist .venv\Scripts\python.exe (
 
 .venv\Scripts\python -m pip install -q --upgrade pip || goto :fail
 .venv\Scripts\python -m pip install -q -r requirements.txt pyinstaller || goto :fail
-.venv\Scripts\python -m PyInstaller --noconfirm --clean --windowed --onefile --name "File Scanner" ^
+.venv\Scripts\python -m PyInstaller --noconfirm --clean --windowed --name "File Scanner" ^
   --collect-all pymediainfo --collect-submodules pillow_heif ^
   --exclude-module PySide6.QtWebEngineCore --exclude-module PySide6.QtWebEngineWidgets ^
   --exclude-module PySide6.Qt3DCore --exclude-module PySide6.QtQuick --exclude-module PySide6.QtQml ^
   --exclude-module tkinter ^
   main.py || goto :fail
-if not exist "dist\File Scanner.exe" goto :fail
+if not exist "dist\File Scanner\File Scanner.exe" goto :fail
+
+rem A folder build starts much faster than a single exe, which unpacks itself on every launch.
+if exist "dist\File Scanner-windows.zip" del "dist\File Scanner-windows.zip"
+tar -a -c -f "dist\File Scanner-windows.zip" -C dist "File Scanner" || goto :fail
 
 echo.
-echo Built "dist\File Scanner.exe"
+echo Built "dist\File Scanner\File Scanner.exe" and "dist\File Scanner-windows.zip"
 pause
 exit /b 0
 
