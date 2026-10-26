@@ -9,7 +9,7 @@ cd "$(dirname "$0")"
   --collect-all pymediainfo --collect-submodules pillow_heif \
   --exclude-module PySide6.QtWebEngineCore --exclude-module PySide6.QtWebEngineWidgets \
   --exclude-module PySide6.Qt3DCore --exclude-module PySide6.QtQuick --exclude-module PySide6.QtQml \
-  --exclude-module PySide6.QtPdf --exclude-module PySide6.QtMultimedia --exclude-module tkinter \
+  --exclude-module tkinter \
   main.py
 cd dist && ditto -c -k --keepParent "File Scanner.app" "File Scanner-mac.zip"
 echo "Built dist/File Scanner.app and dist/File Scanner-mac.zip"

@@ -26,6 +26,4 @@ jobs:
       - uses: actions/upload-artifact@v4
         with:
           name: File-Scanner-${{ runner.os }}
-          path: |
-            dist/*.zip
-            dist/*.exe
+          path: dist/*.zip
