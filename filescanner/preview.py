@@ -316,7 +316,7 @@ def load_archive(path):
                                  time.strftime("%Y-%m-%d %H:%M", time.localtime(m.mtime))])
     else:
         return None
-    note = f"{total:,} items" + (f", showing the first {ARCHIVE_ENTRIES:,}" if total > ARCHIVE_ENTRIES else "")
+    note = f"{total:,} item{'s' if total != 1 else ''}" + (f", showing the first {ARCHIVE_ENTRIES:,}" if total > ARCHIVE_ENTRIES else "")
     return ("table", ["Name", "Size", "Modified"], rows, note)
 
 
