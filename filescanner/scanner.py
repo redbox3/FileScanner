@@ -234,7 +234,7 @@ def walk(opts, progress=None, cancelled=lambda: False):
     if opts.include_folders and not cancelled():
         for path, (n, total) in sorted(folders.items()):
             yield {"name": os.path.basename(path) or path, "extension": "", "category": "Folder",
-                   "type": f"Folder ({n} files)", "size": total, "size_human": human_size(total),
+                   "type": f"Folder ({n} file{'' if n == 1 else 's'})", "size": total, "size_human": human_size(total),
                    "path": path, "folder": os.path.dirname(path), "relative_path": os.path.relpath(path, root),
                    "metadata": {"Files inside (incl. subfolders)": n}}
     if progress:
